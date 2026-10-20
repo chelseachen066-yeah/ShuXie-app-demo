@@ -1,0 +1,14 @@
+# 将源字体与子集化结果放到本目录。
+# 无衬线源文件（OFL）：
+#   NotoSansSC-Regular.otf
+#   NotoSansSC-Medium.otf
+#   OFL.txt
+# 子集化输出（页面实际加载）：
+#   sans-regular.woff2   (400)
+#   sans-medium.woff2    (500)
+#   serif-regular.woff2  (400)
+#   serif-medium.woff2   (500)
+#   serif-semibold.woff2 (600)
+# 衬线源文件在 ../fonts-src/（不入库）。
+#
+# npm run fonts:subset

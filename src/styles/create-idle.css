@@ -1,0 +1,420 @@
+/*
+ * 创作 Tab 初始（idle）状态。数值逐项对应 RN 源码：
+ * app/(tabs)/create.tsx、components/create/CreateIdleView、InspirationCard、
+ * ContinueCard、MessageInputBar、PaperFill。dp 一律按 1:1 写成 px。
+ */
+
+:root {
+  /* Android elevation 2 → Material 风格阴影；按截图卡片下沿亮度剖面校准（峰值约 -12%，拖尾约 3.5px） */
+  --elevation-2: 0 1px 3px rgba(0, 0, 0, 0.13), 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+:root {
+  /* 创作页副标题灰（idle 副标题、对话里的演示标签共用） */
+  --create-subtitle-color: #a39e93;
+}
+
+.tab-layout-body > .create-idle-screen,
+.create-idle-screen {
+  position: relative;
+  /* 抽屉 z-index 200/201 只在本页内部比较，不压过 Tab 栏 */
+  isolation: isolate;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: #f3f0eb;
+  background-size: cover;
+  background-position: center;
+}
+
+/* ── 顶栏：safe-top + 44，右侧 40×44 的两个按钮，gap 8，paddingHorizontal 12 ── */
+.create-topbar {
+  flex: none;
+  box-sizing: border-box;
+  height: calc(var(--safe-top, 0px) + 44px);
+  padding: var(--safe-top, 0px) 12px 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.create-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.create-topbar-btn {
+  width: 40px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.create-topbar-btn:active {
+  opacity: 0.2;
+}
+
+/* ── 滚动区 ── */
+.idle-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 80px;
+  scrollbar-width: none;
+}
+
+.idle-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Hero ── */
+.idle-hero {
+  padding: 28px 22px 24px;
+}
+
+/*
+ * RN 里 fontWeight '600' 配的是 Regular 字体文件。对照 App 截图的笔画密度，
+ * SemiBold 比截图重约 36%，Regular 只差约 5%，所以这里用 400。
+ * RN 没写 lineHeight，Android 实际渲染的行盒约 33px、基线更靠上，
+ * 按截图量得的结果写成 line-height: 33px + 上移 2.2px（浏览器默认会用 hhea 的 43px）。
+ */
+.idle-hero-title {
+  position: relative;
+  top: -2.2px;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 33px;
+  color: #2c2720;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.idle-hero-subtitle {
+  margin: 8px 0 0;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 22.1px;
+  color: var(--create-subtitle-color);
+}
+
+/* ── 阴影壳 ── */
+.idle-host {
+  margin: 0 22px;
+  border-radius: 20px;
+  background: #fbfaf8;
+  box-shadow: var(--elevation-2);
+}
+
+.idle-host-continue {
+  margin-top: 16px;
+}
+
+/* ── PaperFill ── */
+.paper-fill {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  isolation: isolate;
+  pointer-events: none;
+}
+
+.paper-fill-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.paper-fill-img {
+  object-fit: cover;
+}
+
+/* ── 灵感卡 ── */
+.insp-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fbfaf8;
+}
+
+.insp-header {
+  position: relative;
+  height: 52px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.insp-fill {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.insp-fill-img {
+  object-fit: cover;
+}
+
+.insp-header-row {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.insp-header-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insp-header-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 400; /* RN 写的 '600'，同上，按截图笔画取 Regular */
+  color: #ffffff;
+  letter-spacing: 2px;
+}
+
+.insp-refresh {
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.insp-refresh:active {
+  opacity: 0.7;
+}
+
+.insp-body {
+  position: relative;
+}
+
+.insp-body-content {
+  position: relative;
+  z-index: 1;
+  padding: 10px 18px 24px;
+}
+
+.insp-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 14px 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.insp-index {
+  width: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 12px;
+  color: #a8b89e;
+}
+
+.insp-prompt {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 22.5px;
+  color: #2a332b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.arrow-hit {
+  box-sizing: content-box;
+  padding: 12px;
+  margin: -12px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: transparent;
+}
+
+.insp-row:active .arrow-hit,
+.insp-row:focus-visible .arrow-hit {
+  background: rgba(93, 126, 85, 0.08);
+}
+
+.insp-divider {
+  height: 1px;
+  margin-left: 32px;
+  background: #e0dbd0;
+}
+
+/* ── 继续上次创作 ── */
+.continue-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fbfaf8;
+}
+
+.continue-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px 14px 22px;
+}
+
+.continue-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.continue-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.continue-pill {
+  width: 6px;
+  height: 14px;
+  border-radius: 3px;
+  background: #5d7e55;
+}
+
+.continue-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: #7fa26e;
+  letter-spacing: 1px;
+}
+
+.continue-preview {
+  margin: 6px 0 0;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 22.5px;
+  color: #2a332b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 演示用的「直接写」回放入口（原 App 无此元素） */
+.idle-direct-link {
+  display: block;
+  margin: 14px auto 0;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: #a39e93;
+  cursor: pointer;
+}
+
+/* ── 底部输入栏：绝对定位在 Tab 栏上方 16px ── */
+.msg-wrapper {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(56px + var(--safe-bottom, 0px) + 16px);
+  z-index: 10;
+}
+
+.msg-outer {
+  padding: 0 22px;
+}
+
+.msg-shell {
+  box-sizing: border-box;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border-radius: 20px;
+  background: #fdfcf9;
+  box-shadow: var(--elevation-2);
+}
+
+.msg-input {
+  flex: 1;
+  min-width: 0;
+  height: 20px;
+  max-height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 20px;
+  color: #2c2720;
+}
+
+.msg-input::placeholder {
+  color: #a39e93;
+  opacity: 1;
+}
+
+.msg-mic,
+.msg-send {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.msg-mic {
+  background: transparent;
+}
+
+.msg-send {
+  background: #5d7e55;
+}
+
+.msg-send:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

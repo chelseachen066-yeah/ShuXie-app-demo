@@ -1,0 +1,601 @@
+/*
+ * 创作 Tab 对话中界面（静态）。数值逐项对应 RN 源码：
+ * CreateChatView、ChatMessageItem、AiTypewriterBubble、ActionCard、GeneratingCard(Completed)。
+ */
+
+:root {
+  /* RN 里的 Dimensions.get('window').width：桌面手机框固定 393，全屏时跟视口 */
+  --screen-w: 393px;
+}
+
+@media (max-width: 499px) {
+  :root {
+    --screen-w: 100vw;
+  }
+}
+
+/* ── 消息区：paddingHorizontal 16 / paddingTop 8 / paddingBottom max(180, 输入栏 + Tab + 16) ── */
+.chat-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 16px max(180px, calc(128px + var(--safe-bottom, 0px)));
+  scrollbar-width: none;
+}
+
+.chat-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* RN 不做 margin 折叠：外层 marginTop 与卡片自己的 marginTop 相加 */
+.chat-item {
+  display: flow-root;
+}
+
+/* ── AI 消息 ── */
+.chat-assistant-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.chat-assistant-content {
+  min-width: 0;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.chat-ai-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  background: #5d7e55;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-ai-avatar span {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 600; /* 配的是 SemiBold 文件 */
+  color: #ffffff;
+}
+
+.chat-ai-bubble {
+  box-sizing: border-box;
+  align-self: flex-start;
+  max-width: calc(var(--screen-w) * 0.78);
+  padding: 8px 12px;
+  border-radius: 4px 16px 16px 16px;
+  background: #c8d4be;
+}
+
+.chat-ai-paragraphs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-ai-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #2c3d28;
+}
+
+/* ── 用户消息 ── */
+.chat-user-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.chat-user-bubble {
+  box-sizing: border-box;
+  max-width: calc(var(--screen-w) * 0.75);
+  padding: 8px 12px;
+  border: 0.5px solid rgba(90, 80, 60, 0.1);
+  border-radius: 18px 6px 18px 18px;
+  background: #ede8df;
+}
+
+.chat-user-text {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #2c2720;
+  white-space: pre-wrap;
+}
+
+.chat-user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  background: #e8eee4;
+  flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 999px;
+}
+
+.chat-user-avatar span {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 400; /* RN 写 '600' 但配 Regular 文件，按空态的量测结论取 400 */
+  color: #5d7e55;
+}
+
+/* ── ActionCard ── */
+.action-card {
+  position: relative;
+  margin: 8px 16px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fbfaf8;
+}
+
+.action-card-content {
+  position: relative;
+  z-index: 1;
+  padding: 20px;
+}
+
+.action-title-block {
+  margin-bottom: 16px;
+}
+
+/*
+ * 思源宋体在 Android 上的行盒约 1.1em、基线更靠上（空态标题量得），
+ * 浏览器默认按 hhea 取 1.44em，这里按同一比例收成 1.1em 并上移 0.073em。
+ */
+.action-title {
+  position: relative;
+  top: -0.073em;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: #1e2d1f;
+}
+
+.action-subtitle {
+  margin-top: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: #8a8478;
+}
+
+.action-divider {
+  height: 1px;
+  margin-bottom: 16px;
+  background: #e5dfd2;
+}
+
+.action-label {
+  margin-bottom: 10px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: #8a8478;
+}
+
+.action-question-spaced {
+  margin-top: 20px;
+}
+
+.action-option-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.action-option {
+  box-sizing: border-box;
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid #d5cfc2;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: #5a554c;
+  cursor: pointer;
+}
+
+.action-option-selected {
+  border-color: #5d7e55;
+  background: #5d7e55;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.action-name-wrap {
+  overflow: hidden;
+}
+
+.action-name-label {
+  margin-top: 20px;
+}
+
+.action-name-input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  border: 1px solid #d5cfc2;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.6);
+  outline: none;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: #5a554c;
+}
+
+.action-name-input::placeholder {
+  color: #c4b99a;
+  opacity: 1;
+}
+
+.action-start {
+  box-sizing: border-box;
+  width: calc(100% - 96px);
+  height: 44px;
+  margin: 24px 48px 0;
+  padding: 0;
+  border: 1.5px solid #5d7e55;
+  border-radius: 22px;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #5d7e55;
+  cursor: pointer;
+}
+
+.action-start:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.action-start-text {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.action-start-arrow {
+  font-family: var(--font-sans);
+  font-size: 14px;
+}
+
+/* ── 「版本已就绪」卡（CompletedGeneratingCard，静态） ── */
+.gen-card {
+  box-sizing: border-box;
+  margin: 8px 16px 0;
+  padding: 20px;
+  border: 0.5px solid rgba(160, 140, 100, 0.15);
+  border-radius: 16px;
+  background: #fdfaf4;
+  /* elevation 3、阴影色 rgba(100,85,60)：沿用作品卡校准过的 Material 阴影 */
+  box-shadow: 0 2px 4px rgba(60, 50, 30, 0.1), 0 0 4px rgba(60, 50, 30, 0.05);
+}
+
+.gen-completed {
+  padding: 4px 0;
+}
+
+.gen-completed-text {
+  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+  color: #2c2720;
+}
+
+.gen-completed-line {
+  width: 100%;
+  height: 0.5px;
+  margin-bottom: 8px;
+  background: rgba(160, 140, 100, 0.15);
+}
+
+.gen-completed-cta {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #5d7e55;
+  cursor: pointer;
+}
+
+.gen-completed-icon {
+  display: flex;
+  color: #5d7e55;
+}
+
+.gen-completed-label {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.gen-completed-arrow {
+  margin-left: 2px;
+  font-family: var(--font-sans);
+  font-size: 15px;
+}
+
+/* ── 演示回放标签：消息列表第一行，居中 12px，颜色复用创作页副标题 ── */
+.chat-demo-tag {
+  padding: 4px 0 12px;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--create-subtitle-color);
+}
+
+/* 输入栏隐藏（生成中 / 已就绪）时，只需让出 Tab 栏 */
+.chat-scroll.no-input {
+  padding-bottom: calc(56px + var(--safe-bottom, 0px) + 24px);
+}
+
+/* ── 思考中：BreathingDot ×3（8px #B8C7A9，gap 6，paddingVertical 12，paddingLeft 40） ── */
+.chat-thinking {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0 12px 40px;
+}
+
+.chat-thinking span {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: #b8c7a9;
+  opacity: 0.3;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* RN 里每个圆点各自 loop(delay + 500 升 + 500 降)，所以周期不同: 1000 / 1200 / 1400ms */
+.chat-thinking span:nth-child(1) {
+  animation-name: breathe-0;
+  animation-duration: 1000ms;
+}
+.chat-thinking span:nth-child(2) {
+  animation-name: breathe-1;
+  animation-duration: 1200ms;
+}
+.chat-thinking span:nth-child(3) {
+  animation-name: breathe-2;
+  animation-duration: 1400ms;
+}
+
+@keyframes breathe-0 {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+@keyframes breathe-1 {
+  0%, 16.667%, 100% { opacity: 0.3; }
+  58.333% { opacity: 1; }
+}
+@keyframes breathe-2 {
+  0%, 28.571%, 100% { opacity: 0.3; }
+  64.286% { opacity: 1; }
+}
+
+/* ── 建议回复（App 没有的演示元素）：放在消息列表末尾，右对齐 ── */
+.chat-suggest {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  box-sizing: border-box;
+  max-width: calc(var(--screen-w) * 0.75);
+  margin-left: auto;
+  padding: 10px 14px;
+  border: 1px dashed #5d7e55;
+  border-radius: 14px;
+  background: rgba(253, 250, 244, 0.9);
+  text-align: left;
+  cursor: pointer;
+}
+
+.chat-suggest-label {
+  font-size: 11px;
+  color: #5d7e55;
+}
+
+.chat-suggest-text {
+  font-size: 14px;
+  line-height: 21px;
+  color: #2c2720;
+}
+
+/* ── 历史抽屉（create.tsx 的 drawerBackdrop / drawerPanel + HistoryDrawerContent） ── */
+.history-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.history-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.history-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 201;
+  box-sizing: border-box;
+  width: calc(var(--screen-w) * 0.82);
+  padding: var(--safe-top, 0px) 0 var(--safe-bottom, 0px);
+  display: flex;
+  flex-direction: column;
+  background: #faf8f3;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.12);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.35s;
+}
+
+.history-panel.open {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+}
+
+.history-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 0.5px solid #e5e0d5;
+}
+
+.history-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d2d2d;
+}
+
+.history-close {
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #5f5e5a;
+  cursor: pointer;
+}
+
+.history-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #b4b2a9;
+}
+
+.history-empty svg {
+  color: #d3d1c7;
+}
+
+.history-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 8px 0;
+  scrollbar-width: none;
+}
+
+.history-list::-webkit-scrollbar {
+  display: none;
+}
+
+.history-sep {
+  height: 0.5px;
+  margin: 0 20px;
+  background: #e5e0d5;
+}
+
+.history-row {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 14px 20px;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+
+.history-row:active {
+  opacity: 0.7;
+}
+
+.history-row-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.history-badge {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.history-badge.in-progress {
+  background: #d2dfce;
+  color: #2d2d2d;
+}
+
+.history-badge.completed {
+  background: #f1efe8;
+  color: #8b8b84;
+}
+
+.history-date {
+  font-size: 11px;
+  color: #b4b2a9;
+}
+
+.history-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 20px;
+  color: #2d2d2d;
+}
+
+.history-meta {
+  font-size: 12px;
+  color: #b4b2a9;
+}
