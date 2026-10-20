@@ -33,17 +33,17 @@ export const Colors = {
 const asset = (path: string) => `${import.meta.env.BASE_URL}${path}`
 
 export const ASSETS = {
-  hero: asset('hero_bg/background1.png'),
-  createBg: asset('create_page/create_bg.png'),
-  cardBg: asset('create_page/card_bg.jpg'),
+  hero: asset('background1.webp'),
+  createBg: asset('create_bg.webp'),
+  cardBg: asset('card_bg.jpg'),
   widgetPlaceholder: asset('widget-placeholder.png'),
   profileWidget: asset('Frame7.png'),
   covers: [
-    asset('covers/default1.png'),
-    asset('covers/default2.png'),
-    asset('covers/default3.png'),
-    asset('covers/default4.png'),
-    asset('covers/default5.png'),
+    asset('default1.webp'),
+    asset('default2.webp'),
+    asset('default3.webp'),
+    asset('default4.webp'),
+    asset('default5.webp'),
   ],
   textures: {
     jianyue: asset('card_texture/jianyue.jpg'),
