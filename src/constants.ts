@@ -37,7 +37,7 @@ export const ASSETS = {
   createBg: asset('create_bg.webp'),
   cardBg: asset('card_bg.jpg'),
   widgetPlaceholder: asset('widget-placeholder.png'),
-  profileWidget: asset('Frame7.png'),
+  profileWidget: asset('/widget.webp'),
   covers: [
     asset('default1.webp'),
     asset('default2.webp'),
