@@ -36,7 +36,7 @@ export const ASSETS = {
   hero: asset('background1.webp'),
   createBg: asset('create_bg.webp'),
   cardBg: asset('card_bg.jpg'),
-  widgetPlaceholder: asset('widget-placeholder.png'),
+  widgetPlaceholder: asset('/widget.webp'),
   profileWidget: asset('/widget.webp'),
   covers: [
     asset('default1.webp'),
